@@ -1,8 +1,13 @@
 <?php
+/*
+ * Copyright (c) 2022 by bHosted.nl B.V.  - All rights reserved
+ */
 
 namespace Mvdgeijn\Halon;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\ClientException;
 
 class Halon
 {
@@ -13,8 +18,7 @@ class Halon
     public function __construct()
     {
         $this->httpClient = new GuzzleClient([
-            'exceptions' => false,
-            'handler' => $guzzleHandlerStack,
+            'http_errors' => false,
             'auth' => [config('halon.username'),config('halon.password')]
         ]);
 
@@ -26,8 +30,16 @@ class Halon
         return $this->httpClient->get( $this->url . $uri );
     }
 
-    public function time()
+    public function time(): ?Carbon
     {
-        return $this->request('/system/time');
+        $response = $this->request('/system/time');
+
+        if( $response->getStatusCode() == 200 ) {
+            $json = json_decode($response->getBody());
+
+            return new Carbon($json->time);
+        }
+
+        return null;
     }
 }
