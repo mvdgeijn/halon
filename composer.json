@@ -1,0 +1,35 @@
+{
+  "name": "mvdgeijn/halon",
+  "type": "library",
+  "description": "Halon MTA Api",
+  "license": "MIT",
+  "keywords": [
+    "library", "php", "halon"
+  ],
+  "homepage": "https://github.com/mvdgeijn/halon",
+  "authors": [
+    {
+      "name": "Marc van de Geijn",
+      "email": "marc@bhosted.nl",
+      "homepage": "https://www.bhosted.nl/"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/mvdgeijn/halon/issues"
+  },
+  "require": {
+    "php": ">=8.0"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Mvdgeijn\\Halon\\": "src/Halon/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.1.x-dev"
+    }
+  }
+}
