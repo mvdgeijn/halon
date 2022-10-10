@@ -19,7 +19,8 @@ class Halon
     {
         $this->httpClient = new GuzzleClient([
             'http_errors' => false,
-            'auth' => [config('halon.username'),config('halon.password')]
+            'auth' => [config('halon.username'),config('halon.password')],
+            'connect_timeout' => 2
         ]);
 
         $this->url = config('halon.url');
