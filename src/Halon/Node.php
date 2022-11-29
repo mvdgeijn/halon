@@ -14,16 +14,20 @@ class Node
 
     protected string $url = "";
 
+    protected array $endPoints = [];
+
     protected string $username = "";
 
     protected string $password = "";
 
-    public function __construct( array $config )
+    public function __construct( array $config, array $endPoints )
     {
         $this->id       = $config['id'];
         $this->username = $config['username'];
         $this->password = $config['password'];
         $this->url      = $config['url'];
+
+        $this->endPoints = $endPoints;
     }
 
     /**
@@ -52,7 +56,7 @@ class Node
     public function request(string $uri, string $responseClass, array $params = [] ): mixed
     {
         try {
-            $response = $this->client()->get( $this->url . $uri );
+            $response = $this->client()->get( $this->url . $this->endPoints['api'] . $uri );
 
             if( $response->getStatusCode() == 200 ) {
                 return new ($responseClass)( json_decode($response->getBody()) );

@@ -26,7 +26,7 @@ class Cluster
         $config = config('halon');
 
         foreach( $config['nodes'] as $nodeConfig ) {
-            $this->nodes[] = ( new Node( $nodeConfig ) );
+            $this->nodes[] = ( new Node( $nodeConfig, $config['endpoints'] ) );
         }
     }
 
