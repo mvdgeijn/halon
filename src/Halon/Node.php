@@ -20,10 +20,10 @@ class Node
 
     public function __construct( array $config )
     {
-        $this->id       = $config->id;
-        $this->username = $config->username;
-        $this->password = $config->password;
-        $this->url      = $config->url;
+        $this->id       = $config['id'];
+        $this->username = $config['username'];
+        $this->password = $config['password'];
+        $this->url      = $config['url'];
     }
 
     /**
