@@ -11,7 +11,7 @@ class HalonServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'halon');
+        $this->mergeConfigFrom(__DIR__.'/../../config/config.php', 'halon');
 
         $this->app->singleton(\Mvdgeijn\Halon\Cluster::class, function() {
             return \Mvdgeijn\Halon\Cluster::get();
