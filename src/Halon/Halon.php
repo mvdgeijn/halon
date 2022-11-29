@@ -11,19 +11,13 @@ use GuzzleHttp\Exception\ClientException;
 
 class Halon
 {
-    protected ?GuzzleClient $httpClient = null;
+    private Node $connection;
 
     protected string $url = "";
 
-    public function __construct()
+    public function __construct( )
     {
-        $this->httpClient = new GuzzleClient([
-            'http_errors' => false,
-            'auth' => [config('halon.username'),config('halon.password')],
-            'connect_timeout' => 2
-        ]);
-
-        $this->url = config('halon.url');
+        $this->connection = \App::get( Node::class );
     }
 
     protected function request( string $uri, array $params = [] )
@@ -43,4 +37,44 @@ class Halon
 
         return null;
     }
+
+    public function uptime(): ?int
+    {
+        $response = $this->request('/system/uptime');
+
+        if( $response->getStatusCode() == 200 ) {
+            $json = json_decode($response->getBody());
+
+            return $json->uptime;
+        }
+
+        return null;
+    }
+
+    public function currentVersion(): ?string
+    {
+        $response = $this->request('/system/versions/current');
+
+        if( $response->getStatusCode() == 200 ) {
+            $json = json_decode($response->getBody());
+
+            return $json->version;
+        }
+
+        return null;
+    }
+
+    public function latestVersion(): ?string
+    {
+        $response = $this->request('/system/versions/latest');
+
+        if( $response->getStatusCode() == 200 ) {
+            $json = json_decode($response->getBody());
+
+            return $json->version;
+        }
+
+        return null;
+    }
+
 }
