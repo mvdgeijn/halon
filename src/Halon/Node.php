@@ -4,7 +4,15 @@ namespace Mvdgeijn\Halon;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Mvdgeijn\Halon\Commands\Smtpd;
 use Mvdgeijn\Halon\Exceptions\HalonException;
+use Mvdgeijn\Halon\Responses\QuarantineMailsResponse;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class Node
 {
@@ -20,7 +28,11 @@ class Node
 
     protected string $password = "";
 
-    public function __construct( array $config, array $endPoints )
+    /**
+     * @param array $config
+     * @param array $endPoints
+     */
+    public function __construct(array $config, array $endPoints )
     {
         $this->id       = $config['id'];
         $this->username = $config['username'];
@@ -64,6 +76,45 @@ class Node
                 return null;
             }
         } catch( GuzzleException $e ) {
+            throw new HalonException( $e->getMessage() );
+        }
+    }
+
+    /**
+     * @param Smtpd $data
+     * @param string $responseClass
+     * @return mixed
+     * @throws HalonException
+     */
+    public function command(Smtpd $data, string $responseClass ): mixed
+    {
+        $url = $this->url . $this->endPoints['commands'];
+
+        try {
+            $response = $this->client()->post($url, [
+                'body' => json_encode($data )
+            ]);
+
+            if( $response->getStatusCode() == 200 ) {
+                $body = $response->getBody()->getContents();
+
+                $encoders = [new JsonEncoder()];
+                $normalizers = [
+                    new ArrayDenormalizer(),
+                    new DateTimeNormalizer(),
+                    new ObjectNormalizer(
+                        null,
+                        null,
+                        null,
+                        new ReflectionExtractor() )
+                ];
+                $serializer = new Serializer($normalizers, $encoders);
+
+                return $serializer->deserialize( $body, $responseClass, 'json' );
+            } else {
+                return null;
+            }
+        } catch (GuzzleException $e) {
             throw new HalonException( $e->getMessage() );
         }
     }

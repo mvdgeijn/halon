@@ -4,5 +4,5 @@ namespace Mvdgeijn\Halon;
 
 abstract class Response
 {
-    abstract public function __construct( \stdClass $response );
+    abstract public function __construct( $response = null );
 }

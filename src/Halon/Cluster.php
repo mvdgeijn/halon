@@ -2,13 +2,16 @@
 
 namespace Mvdgeijn\Halon;
 
+use Iterator;
 use Mvdgeijn\Halon\Exceptions\HalonException;
 use Mvdgeijn\Halon\Requests\TimeRequest;
 use Mvdgeijn\Halon\Responses\TimeResponse;
 
-class Cluster
+class Cluster implements Iterator
 {
     private array $nodes = [];
+
+    private $index = 0;
 
     /**
      * @return Cluster
@@ -36,5 +39,51 @@ class Cluster
     public function getFirstNode(): Node
     {
         return reset( $this->nodes );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function current(): mixed
+    {
+        if( count($this->nodes) > $this->index )
+            return $this->nodes[$this->index];
+        else
+            return null;
+    }
+
+    /**
+     * @return void
+     */
+    public function next(): void
+    {
+        $this->index++;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function key(): mixed
+    {
+        if( count( $this->nodes ) > $this->index )
+            return $this->index;
+        else
+            return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function valid(): bool
+    {
+        return( count( $this->nodes ) > $this->index );
+    }
+
+    /**
+     * @return void
+     */
+    public function rewind(): void
+    {
+        $this->index = 0;
     }
 }
